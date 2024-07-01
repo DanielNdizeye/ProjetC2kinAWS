@@ -1,0 +1,61 @@
+### Étape 1 : Créer le script shell (check_and_download.sh)
+
+Créez un nouveau fichier check_and_download.sh et ajoutez le contenu suivant :
+
+bash
+#!/bin/bash
+
+# Chemin vers le répertoire où ce script est situé
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LOG_FILE="$SCRIPT_DIR/download_log.txt"
+SERVER_CONF="$SCRIPT_DIR/server.conf"
+GIT_REPO="https://github.com/yourusername/your-repo.git"
+
+# Vérifier si server.conf existe
+if [ ! -f "$SERVER_CONF" ]; then
+    echo "$(date +"%Y-%m-%d %H:%M:%S"): Fichier server.conf inexistant. Téléchargement en cours..." >> "$LOG_FILE"
+    git clone "$GIT_REPO" "$SCRIPT_DIR" >> "$LOG_FILE" 2>&1
+    if [ $? -eq 0 ]; then
+        echo "$(date +"%Y-%m-%d %H:%M:%S"): Téléchargement réussi." >> "$LOG_FILE"
+    else
+        echo "$(date +"%Y-%m-%d %H:%M:%S"): Échec du téléchargement." >> "$LOG_FILE"
+        exit 1
+    fi
+else
+echo "$(date +"%Y-%m-%d %H:%M:%S"): Fichier server.conf trouvé." >> "$LOG_FILE"
+fi
+
+### Explication du script :
+
+- *Variables :*
+  - SCRIPT_DIR: Chemin absolu du répertoire où se trouve le script.
+  - LOG_FILE: Chemin du fichier de journalisation (download_log.txt) situé dans le même répertoire que le script.
+  - SERVER_CONF: Chemin complet vers le fichier server.conf dans le répertoire du script.
+  - GIT_REPO: URL du dépôt Git où server.conf peut être téléchargé.
+
+- *Vérification et téléchargement :*
+  - Le script vérifie si server.conf existe (-f "$SERVER_CONF"). Si ce n'est pas le cas, il enregistre un message dans le fichier de log indiquant qu'il commence letéléchargement.
+  - Utilisation de git clone pour télécharger le dépôt dans le répertoire actuel ("$SCRIPT_DIR"). Les résultats de cette opération sont redirigés vers le fichier de log.
+  - Si le téléchargement réussit ($? -eq 0), un message de réussite est ajouté au fichier de log. Sinon, un message d'échec est ajouté et le script se termine avec un code d'erreur (exit 1).
+
+Étape 2 : Configurer la tâche cron
+
+Pour automatiser ce processus à intervalles réguliers, nous allons configurer une tâche cron. Ouvrez votre éditeur de crontab avec la commande suivante :
+
+bash
+crontab -e
+
+
+Ajoutez la ligne suivante pour exécuter le script toutes les heures par exemple :
+
+0 * * * * /bin/bash /chemin/vers/votre/script/check_and_download.sh
+
+
+Assurez-vous de remplacer /chemin/vers/votre/script/check_and_download.sh par le chemin absolu où se trouve votre script check_and_download.sh.
+
+Étape 3 : Surveiller les logs en temps réel
+
+Pour surveiller les logs en temps réel et vérifier que tout fonctionne comme prévu, utilisez la commande tail -f sur votre fichier de log :
+
+bash
+tail -f /chemin/vers/votre/script/download_log.txt
