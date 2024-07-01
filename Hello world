@@ -1,0 +1,19 @@
+Pour commencer, on crée un fichier Shell « daniel.sh » qui va contenir le scirpt à exécuter:
+ touch daniel.sh 
+A travers un editeur de modification de fichier, on entre dans le fichier daniel.sh créé pour y entrer notre script:
+nano daniel.sh 
+Une fois dans l’éditeur, on commence par la combinaison des caractères spéciaux et d’un path bash ; puis, on affiche le message « Hello world » grace à la commande echo
+# !/bin/bash 
+   echo ‘Hello world’  
+On installe crontab pour exécuter le script après un intervalle de temps donné :
+sudo yum install cronie
+On démarre la commande crontab 
+sudo service crond start
+On entre la commande « crontab -e » qui va nous permettre d’exécuter ce script après chaque minute et le journaliser directement
+Pour exécuter un script après chaque minute, on entre la commande suivante
+* * * * * /le_path_du_script >>journal.log
+Les asterix correspondent à la durée que prendra le crontab à repeter le code. Pour notre cas, c’est une minute.
+Et l’exécution de ce code sera redirectionné dans un fichier journal(.log) à chaque répétition.
+On rend le fichier exécutable avec la commande « chmod +x nom_du_fichier » 
+Et en fin on voit le fichier journal en temps réel grace à la commande 
+tail -f journal.log
