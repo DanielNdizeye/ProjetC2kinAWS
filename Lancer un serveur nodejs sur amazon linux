@@ -1,0 +1,56 @@
+Node JS
+	1. *Initialisation du projet* :
+   Assurez-vous d'avoir Node.js et npm installés sur votre système. S'ils ne sont pas installés, exécutez ces commandes:
+ sudo yum install nodejs
+ node -v //Pour verifier si node a été bien installé en vérifiant sa version
+ sud yum install npm
+ npm -v //Pour verifier si npm a bien été installé en vérifiant sa  version
+Créez un nouveau dossier pour votre projet et initialisez un projet Node.js en exécutant npm init -y dans ce dossier. Ensuite, installez Express avec npm install express.
+
+2. *Configurer Express* :
+   Créez un fichier app.js (ou tout autre nom de votre choix) et configurez Express pour gérer les routes home et help.
+
+   javascript
+   const express = require('express');
+   const fs = require('fs');
+
+   const app = express();
+
+   // Routes
+   app.get('/', (req, res) => {
+       res.send('Accueil');
+       console.log('Vous etes sur ma page d'accueil');
+   });
+
+   app.get('/help', (req, res) => {
+       res.send('Aide');
+       console.error('ceci est une simulation d'erreur');
+   });
+   // Middleware pour enregistrer les visites dans un fichier log
+   app.use((req, res, next) => {
+       const log = `${new Date().toISOString()} - ${req.method} ${req.url}\n`;
+       fs.appendFile('JournalNode.log', log, (err) => {
+           if (err) console.log(err); console.log('Visite enregistrée');
+       });
+       next();
+   });
+
+
+   app.listen(5000);
+   
+
+   Dans cet exemple :
+   - Deux routes sont définies : une pour la page d'accueil (/) et une pour la page d'aide (/help).
+   - Le script sera écouté sur le port 5000
+   -Le tout sera journalisé dans un fichier JournalNode.log
+    
+
+3. *Lancer l'application* :
+   Pour démarrer le serveur, exécutez node app.js dans votre terminal.
+
+
+
+
+
+
+
